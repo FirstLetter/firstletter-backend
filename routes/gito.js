@@ -83,9 +83,9 @@ router.get('/login/callback', async (req, res, next) => {
   const result = await runQuery(parsedInfo[ACCESS_TOKEN_CONST])
   const username = getUserName(result.data)
   if(username == null) {
-    res.redirect(`http://localhost:3001/`)
+    res.redirect(process.env.REDIRECT_URL_NOT_FOUND)
   } else {
-    res.redirect(`http://localhost:3001/${username}`)
+    res.redirect([process.env.REDIRECT_URL_FOUND, username].join('/'))
   }
   
   const presult = await processUserInfo(result['data'], parsedInfo[ACCESS_TOKEN_CONST])
