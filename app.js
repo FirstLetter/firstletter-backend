@@ -7,9 +7,10 @@ const gitoRouter = require('./routes/gito');
 const graphqlHttp = require('express-graphql')
 const graphql_schema = require('./schema/graphql_schema')
 const mongoose = require('mongoose')
-import cors from 'cors' 
-import 'dotenv/config'
-import {schema} from './schema/graphql_schema'
+const cors = require('cors') 
+require('dotenv').config()
+
+const schema = require('./schema/graphql_schema').schema
 
 const openConnection = () => {
   mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0-zauig.mongodb.net/${process.env.DB_NAME}?retryWrites=true&r=majority`, {useNewUrlParser: true})
@@ -31,7 +32,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/gito', gitoRouter);
 app.use('/graphql', graphqlHttp({
-  schema: schema
+  schema: schema,
+  graphiql: true
 }))
 
 app.get('/', (req, res, next) => {

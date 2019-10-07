@@ -3,7 +3,10 @@ const Schema = mongoose.Schema
 
 const githubUserSchema = new Schema({
     github_username: String,
-    user_auth_token: String
+    user_auth_token: String,
+    is_valid: Boolean
 })
 
-export const GithubUserModel = mongoose.model('GithubUser', githubUserSchema)
+module.exports = {
+    GithubUserModel: mongoose.model('GithubUser', githubUserSchema)
+}

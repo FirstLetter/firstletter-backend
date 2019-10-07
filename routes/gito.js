@@ -24,13 +24,15 @@ const getUserName = (data) => {
 } 
 
 const updateUserInDatabase = async (username, authToken) => {
+  console.log("updating existing user...")
   const result = await GithubUserModel.updateOne(
     {
       github_username: username
     }, 
     {
       github_username: username,
-      user_auth_token: authToken
+      user_auth_token: authToken,
+      is_valid: true
     }
   )
   // console.log(result)
@@ -38,7 +40,8 @@ const updateUserInDatabase = async (username, authToken) => {
 }
 
 const addUserToDatabase = async (username, authToken) => {
-  const newUser = new GithubUserModel(
+  console.log("adding new user... ")
+  const newUser = await new GithubUserModel(
     {
       github_username: username,
       user_auth_token: authToken
@@ -52,7 +55,8 @@ const addUserToDatabase = async (username, authToken) => {
 const processUserInfo = async (data, authToken) => {
   const username = getUserName(data)
   if(username != null){
-    const isFound = GithubUserModel.findOne({ github_username: username }).exec()
+    const isFound = await GithubUserModel.findOne({ github_username: username }).exec()
+    console.log(isFound)
     if(isFound != null) {
       const b = updateUserInDatabase(username, authToken)
       return b
@@ -66,7 +70,7 @@ const processUserInfo = async (data, authToken) => {
 
 router.get('/login/callback', async (req, res, next) => {
 
-  // console.log("Recieved request..")
+  console.log("Recieved request..")
 
   const { query } = req
   const { code } = query
@@ -81,15 +85,18 @@ router.get('/login/callback', async (req, res, next) => {
   // console.log(parsedInfo)
 
   const result = await runQuery(parsedInfo[ACCESS_TOKEN_CONST])
+  if(result == null || result.data == null) {
+    return res.redirect(process.env.REDIRECT_URL_NOT_FOUND)
+  }
   const username = getUserName(result.data)
   if(username == null) {
-    res.redirect(process.env.REDIRECT_URL_NOT_FOUND)
+    return res.redirect(process.env.REDIRECT_URL_NOT_FOUND)
   } else {
     res.redirect([process.env.REDIRECT_URL_FOUND, username].join('/'))
   }
   
   const presult = await processUserInfo(result['data'], parsedInfo[ACCESS_TOKEN_CONST])
-  
+  console.log(presult)
 });
 
 module.exports = router;
