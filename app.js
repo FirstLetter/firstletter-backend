@@ -34,6 +34,13 @@ app.use('/graphql', graphqlHttp({
   schema: schema
 }))
 
+app.get('/', (req, res, next) => {
+
+  return res.json({
+    message: "Hi, Gito Welcomes You!"
+  })
+})
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
