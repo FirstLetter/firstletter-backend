@@ -34,7 +34,7 @@ const updateUserInDatabase = async (username, authToken) => {
       user_auth_token: authToken,
       is_valid: true
     }
-  )
+  ).exec()
   // console.log(result)
   return result
 }
@@ -82,9 +82,11 @@ router.get('/login/callback', async (req, res, next) => {
   })
 
   const parsedInfo = parseGithubAuthInfo(response.data)
-  // console.log(parsedInfo)
+  console.log(parsedInfo)
 
   const result = await runQuery(parsedInfo[ACCESS_TOKEN_CONST])
+  console.log(result)
+
   if(result == null || result.data == null) {
     return res.redirect(process.env.REDIRECT_URL_NOT_FOUND)
   }
