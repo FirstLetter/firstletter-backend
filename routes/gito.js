@@ -90,8 +90,10 @@ router.get('/login/callback', async (req, res, next) => {
   }
   const username = getUserName(result.data)
   if(username == null) {
+    console.log(`Redirecting to ${process.env.REDIRECT_URL_NOT_FOUND}`)
     return res.redirect(process.env.REDIRECT_URL_NOT_FOUND)
   } else {
+    console.log(`Redirecting to ${process.env.REDIRECT_URL_FOUND}`)
     res.redirect([process.env.REDIRECT_URL_FOUND, username].join('/'))
   }
   
